@@ -33,14 +33,14 @@ class PyOnPoint {
 public:
     PyOnPoint(const double &x, const double &y, const double &z) : xyz({x,y,z}) {}
 
-    void XYZ_Setter(const double &x_,
-                    const double &y_,
-                    const double &z_){
-        xyz = {x_, y_, z_};
+    void XYZ_Setter(double &x_,
+                    double &y_,
+                    double &z_){
+        xyz=std::vector<double>({x_, y_, z_});
     }
 
-    std::array<double, 3> XYZ_Getter(){
-        return  {xyz[0], xyz[1], xyz[2]};
+    std::vector<double> XYZ_Getter(){
+        return xyz;
     }
 
     double Distance(const PyOnPoint &other){
