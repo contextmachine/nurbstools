@@ -1,5 +1,6 @@
 [build-system]
 requires = [
+    "pybind11-global",
     "setuptools>=42",
     "wheel",
     "ninja",
