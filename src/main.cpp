@@ -1,7 +1,15 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl_bind.h>
+#include "map"
 #include "opennurbs_public.h"
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
+
+
+PYBIND11_MAKE_OPAQUE(std::vector<double>);
+PYBIND11_MAKE_OPAQUE(std::map<std::string, double>);
+
+// ...
 
 int add(int i, int j) {
     return i + j;
@@ -18,16 +26,23 @@ ON_3dPoint VectorToON_3dPoint(const std::vector<double>& point){
 }
 
 
+
+
+
 class PyOnPoint {
 public:
     PyOnPoint(const double &x, const double &y, const double &z) : xyz({x,y,z}) {}
-    void XYZ_Setter(const double &x_, const double &y_, const double &z_){
 
+    void XYZ_Setter(const double &x_,
+                    const double &y_,
+                    const double &z_){
         xyz = {x_, y_, z_};
     }
-    std::vector<double> XYZ_Getter(){
-        return xyz;
+
+    std::array<double, 3> XYZ_Getter(){
+        return  {xyz[0], xyz[1], xyz[2]};
     }
+
     double Distance(const PyOnPoint &other){
 
         auto on_pt_a = this->toON();
@@ -46,7 +61,10 @@ private:
 
 namespace py = pybind11;
 
+
 PYBIND11_MODULE(nurbstools, m) {
+    py::bind_vector<std::vector<double>>(m, "VectorDouble");
+    py::bind_map<std::map<std::string, double>>(m, "MapStringDouble");
     py::class_<PyOnPoint>(m, "Point")
             .def(py::init<const double & ,const double &, const double &>())
             .def_property("xyz", &PyOnPoint::XYZ_Getter, &PyOnPoint::XYZ_Setter)
