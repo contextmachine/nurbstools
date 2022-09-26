@@ -27,10 +27,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-
-    - name: Pre commit
-      run: pre-commit run -a
-
     - name: Add requirements
       run: python -m pip install --upgrade wheel setuptools pybind11-global
 
