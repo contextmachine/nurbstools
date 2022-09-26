@@ -36,8 +36,8 @@ jobs:
 
       # Currently conda-build requires the dead package "toml" but doesn't declare it
       - name: Prepare
-        run: conda install conda-build conda-verify pytest toml
-
+        run: conda install conda-build conda-verify pybind11 pytest toml
+        
       - name: Build
         run: conda build conda.recipe
 
