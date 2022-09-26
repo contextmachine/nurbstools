@@ -1,5 +1,5 @@
 #include <pybind11/pybind11.h>
-
+#include "opennurbs_public.h"
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
@@ -7,14 +7,56 @@ int add(int i, int j) {
     return i + j;
 }
 
+
+double dist(const ON_3dPoint& point_a,const ON_3dPoint& point_b){
+    return point_a.DistanceTo(point_b);
+}
+
+
+ON_3dPoint VectorToON_3dPoint(const std::vector<double>& point){
+    return ON_3dPoint(point[0], point[1], point[2]);
+}
+
+
+class PyOnPoint {
+public:
+    PyOnPoint(const double &x, const double &y, const double &z) : xyz({x,y,z}) {}
+    void XYZ_Setter(const double &x_, const double &y_, const double &z_){
+
+        xyz = {x_, y_, z_};
+    }
+    std::vector<double> XYZ_Getter(){
+        return xyz;
+    }
+    double Distance(const PyOnPoint &other){
+
+        auto on_pt_a = this->toON();
+        auto on_ptb = VectorToON_3dPoint(other.xyz);
+        return dist(on_pt_a, on_ptb);
+
+
+    }
+private:
+    std::vector<double> xyz;
+    ON_3dPoint toON( ){
+        return VectorToON_3dPoint(xyz);
+    }
+};
+
+
 namespace py = pybind11;
 
-PYBIND11_MODULE(cmake_example, m) {
+PYBIND11_MODULE(nurbstools, m) {
+    py::class_<PyOnPoint>(m, "Point")
+            .def(py::init<const double & ,const double &, const double &>())
+            .def_property("xyz", &PyOnPoint::XYZ_Getter, &PyOnPoint::XYZ_Setter)
+            .def("distance",&PyOnPoint::Distance);
+
     m.doc() = R"pbdoc(
-        Pybind11 example plugin
+    Pybind11 nurbstools plugin
         -----------------------
 
-        .. currentmodule:: cmake_example
+        .. currentmodule:: nurbstools
 
         .. autosummary::
            :toctree: _generate

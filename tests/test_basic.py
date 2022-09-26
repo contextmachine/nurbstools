@@ -1,4 +1,4 @@
-import ongeoms as m
+import nurbstools as m
 
 
 def test_main():
